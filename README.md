@@ -1,6 +1,6 @@
 - 👋 Hi, I’m @H1387Lmao
 - 👀 I’m interested in cybersecurity
-- 🌱 I’m currently learning rust
+- 🌱 I’m currently learning go
 - 💞️ I’m looking to collaborate on backend development
 - 📫 How to reach me | Email me h1387.dion@gmail.com
 - 😄 Pronouns: he / him
