@@ -401,25 +401,47 @@ html, body {
 const animeList = [
   {
     title: "Bocchi The Rock!",
-    image: "https://static.wikia.nocookie.net/bocchi-the-rock/images/4/44/Bocchi_the_Rock%21_Anime_Main_Key_Visual.png/revision/latest?cb=20220920072704",
-    started: "2026-03-28T11:32:12+08:00",
+    image: "https://a.storyblok.com/f/178900/960x540/74b4297d75/cr_bocchi_hero.png/m/filters:quality(95)format(webp)",    started: "2026-03-28T11:32:12+08:00",
     animeStatus: "Completed",
     mangaStatus: "100%",
     watchedEpisodes: 14,
     totalEpisodes: 14,
     accentColor: "#ff4fa3",
-    glowColor: "rgba(255,79,163,0.18)"
+    glowColor: "rgba(255,79,163,0.38)"
   },
   {
     title: "K-ON!",
-    image: "https://upload.wikimedia.org/wikipedia/en/d/df/K-On%21_season_1_key_visual.png",
+    image: "https://static.wikia.nocookie.net/anime/images/5/59/K-on.jpg/revision/latest?cb=20161111115042&path-prefix=de",
     started: "2026-05-21T19:21:03+08:00",
     animeStatus: "Completed",
     mangaStatus: "Unread",
     watchedEpisodes: 58,
     totalEpisodes: 58,
     accentColor: "#23a8f3",
-    glowColor: "rgba(35,168,248,0.15)"
+    glowColor: "rgba(35,168,248,0.38)"
+  },
+  {
+    title: "Girls band cry",
+    image: "https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=1200,height=675/catalog/crunchyroll/ea3ac85312b7d8abfc7c6a6714160c04.png",
+    started: "2026-05-25T09:48:21+08:00",
+    animeStatus: "Completed",
+    mangaStatus: "Unread",
+    watchedEpisodes: 13,
+    totalEpisodes: 13,
+    accentColor: "#af2636",
+    glowColor: "rgba(176, 38, 54, 0.38)"
+  },
+  {
+    title: "Konosuba",
+    image: "https://m.media-amazon.com/images/M/MV5BNTQ5NzJjMjgtNDliNC00YTdmLWJiOTQtYWRiMzY4OWU5NGQ3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
+    started: "2025-09-25T10:56:18+08:00",
+    animeStatus: "Completed",
+    mangaStatus: "13% • Dropped",
+    seriesLabel: "Light novel",
+    watchedEpisodes: 58,
+    totalEpisodes: 58,
+    accentColor: "#e6d47b",
+    glowColor: "rgba(230, 212, 123, 0.38)"
   }
 ];
 
@@ -442,6 +464,7 @@ function buildAnimeLibraryHTML() {
     <div class="anime-library">
       ${animeList.map(anime => {
         const pct = (anime.watchedEpisodes / anime.totalEpisodes) * 100;
+        const seriesLabel = anime.seriesLabel || "Manga";
         return `
         <div class="anime-card">
           <div class="anime-card-glow" style="background: radial-gradient(circle at top right, ${anime.glowColor}, transparent 60%)"></div>
@@ -453,7 +476,7 @@ function buildAnimeLibraryHTML() {
               <div class="anime-title">${anime.title}</div>
               <div class="anime-badges">
                 <div class="anime-badge">${anime.animeStatus}</div>
-                <div class="anime-badge"><span style="color:rgba(255,255,255,0.3)">Manga </span>${anime.mangaStatus}</div>
+                <div class="anime-badge"><span style="color:rgba(255,255,255,0.3)">${seriesLabel} </span>${anime.mangaStatus}</div>
               </div>
               <div class="anime-progress-header">
                 <div class="anime-progress-label">Episodes</div>
