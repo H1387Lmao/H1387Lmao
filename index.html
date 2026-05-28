@@ -357,6 +357,152 @@ html, body {
   font-size: 11px;
   color: rgba(200,160,160,.45);
 }
+
+.anime-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.anime-title-row .anime-title {
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 0;
+}
+.anime-rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  padding: 3px 7px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.anime-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Song Player */
+.song-player {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 5px 9px 5px 6px;
+  flex: 1;
+  min-width: 0;
+  max-width: 175px;
+}
+.song-play-btn {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--song-accent, #cc3333);
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  transition: transform .15s, opacity .15s;
+}
+.song-play-btn:hover { transform: scale(1.1); opacity: .85; }
+.song-info { min-width: 0; }
+.song-title {
+  font-size: 11px; font-weight: 700;
+  color: rgba(255,255,255,.8);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.song-artist {
+  font-size: 10px;
+  color: rgba(200,160,160,.5);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Expand button */
+.expand-btn {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 8px;
+  padding: 5px 10px;
+  color: var(--exp-color, rgba(200,160,160,.7));
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 11px; letter-spacing: .06em;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.expand-btn:hover { background: rgba(255,255,255,0.09); }
+.expand-chevron {
+  transition: transform .25s;
+}
+.expand-chevron.rotated { transform: rotate(180deg); }
+
+/* Seasons panel */
+.seasons-panel {
+  padding: 0 14px 14px;
+}
+.seasons-divider {
+  height: 1px;
+  margin-bottom: 12px;
+  border-radius: 1px;
+}
+.seasons-list { display: flex; flex-direction: column; gap: 10px; }
+.season-row {}
+.season-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.season-title {
+  font-size: 11px; font-weight: 700;
+  color: rgba(255,255,255,.7);
+  flex: 1; min-width: 0;
+}
+.season-note {
+  font-size: 10px;
+  color: rgba(200,160,160,.4);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.season-progress-wrap {
+  display: flex; align-items: center; gap: 8px;
+}
+.season-progress-track {
+  flex: 1; height: 3px;
+  background: rgba(255,255,255,.06);
+  border-radius: 999px; overflow: hidden;
+}
+.season-progress-fill {
+  height: 100%; border-radius: 999px;
+  transition: width .5s;
+}
+.season-ep-count {
+  font-size: 10px;
+  color: rgba(200,160,160,.4);
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: right;
+}
+.seasons-count {
+  border-width: 1px;
+  border-style: solid;
+}
+.anime-card.expanded {
+  border-color: rgba(255,255,255,0.1);
+}
 </style>
 </head>
 <body>
@@ -398,18 +544,75 @@ html, body {
 
 <script>
 
+// Franchise song state
+let currentAudio = null;
+let currentSongBtn = null;
+
+function playSong(btn, url, franchiseId) {
+  // Stop if same song playing
+  if (currentAudio && !currentAudio.paused && currentSongBtn === btn) {
+    currentAudio.pause();
+    btn.innerHTML = getSongIcon('play');
+    currentSongBtn = null;
+    return;
+  }
+  // Stop previous
+  if (currentAudio) {
+    currentAudio.pause();
+    if (currentSongBtn) currentSongBtn.innerHTML = getSongIcon('play');
+  }
+  currentAudio = new Audio(url);
+  currentAudio.volume = 0.7;
+  currentAudio.play().catch(() => {});
+  btn.innerHTML = getSongIcon('pause');
+  currentSongBtn = btn;
+  currentAudio.onended = () => {
+    btn.innerHTML = getSongIcon('play');
+    currentSongBtn = null;
+  };
+}
+
+function getSongIcon(state) {
+  return state === 'play'
+    ? `<svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><polygon points="5,3 19,12 5,21"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>`;
+}
+
 const animeList = [
   {
+    id: "bocchi",
     title: "Bocchi The Rock!",
-    image: "https://a.storyblok.com/f/178900/960x540/74b4297d75/cr_bocchi_hero.png/m/filters:quality(95)format(webp)",    started: "2026-03-28T11:32:12+08:00",
+    image: "https://a.storyblok.com/f/178900/960x540/74b4297d75/cr_bocchi_hero.png/m/filters:quality(95)format(webp)",
+    started: "2026-03-28T11:32:12+08:00",
     animeStatus: "Completed",
     mangaStatus: "100%",
     watchedEpisodes: 14,
     totalEpisodes: 14,
     accentColor: "#ff4fa3",
-    glowColor: "rgba(255,79,163,0.38)"
+    glowColor: "rgba(255,79,163,0.38)",
+    rating: 9.9,
+    song: { title: "Bundle Up Your Dreams", artist: "Kessoku Band", url: "https://static.wikia.nocookie.net/bocchi-the-rock/images/c/c3/Yume_wo_Tabanete.ogg/revision/latest?cb=20240905134029" },
+    seasons: [
+      {
+        title: "Bocchi The Rock!",
+        animeStatus: "Completed",
+        mangaStatus: "100%",
+        watchedEpisodes: 12,
+        totalEpisodes: 12,
+        note: "Main series"
+      },
+      {
+        title: "Bocchi The Rock! Recap Compilations",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 2,
+        totalEpisodes: 2,
+        note: "Recaps"
+      }
+    ]
   },
   {
+    id: "kon",
     title: "K-ON!",
     image: "https://static.wikia.nocookie.net/anime/images/5/59/K-on.jpg/revision/latest?cb=20161111115042&path-prefix=de",
     started: "2026-05-21T19:21:03+08:00",
@@ -418,43 +621,202 @@ const animeList = [
     watchedEpisodes: 58,
     totalEpisodes: 58,
     accentColor: "#23a8f3",
-    glowColor: "rgba(35,168,248,0.38)"
+    glowColor: "rgba(35,168,248,0.38)",
+    rating: 9.8,
+    song: { title: "Cagayake Girls!", artist: "Ho-kago Tea Time", url: "https://archive.org/download/kon-cagayake-girls/1.%20Cagayake%21GIRLS.mp3" },
+    seasons: [
+      {
+        title: "K-ON! Season 1",
+        animeStatus: "Completed",
+        mangaStatus: "Unread",
+        watchedEpisodes: 13,
+        totalEpisodes: 13,
+        note: "13 eps"
+      },
+      {
+        title: "K-ON!! Season 2",
+        animeStatus: "Completed",
+        mangaStatus: "Unread",
+        watchedEpisodes: 26,
+        totalEpisodes: 26,
+        note: "26 eps"
+      },
+      {
+        title: "K-ON! The Movie",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 1,
+        totalEpisodes: 1,
+        note: "Film"
+      },
+      {
+        title: "K-ON! Live House",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 1,
+        totalEpisodes: 1,
+        note: "OVA Continuation for Season 1"
+      },
+      {
+        title: "K-ON! Keikaku! (Planning)",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 1,
+        totalEpisodes: 1,
+        note: "OVA Continuation for Season 2"
+      },
+      {
+        title: "K-ON! Ura On!",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 7,
+        totalEpisodes: 7,
+        note: "Special Short Episode Anime"
+      },
+      {
+        title: "K-ON!! Ura On!!",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 9,
+        totalEpisodes: 9,
+        note: "Second Special Short Episode Anime"
+      },
+    ]
   },
   {
-    title: "Girls band cry",
+    id: "gbc",
+    title: "Girls Band Cry",
     image: "https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=1200,height=675/catalog/crunchyroll/ea3ac85312b7d8abfc7c6a6714160c04.png",
     started: "2026-05-25T09:48:21+08:00",
     animeStatus: "Completed",
-    mangaStatus: "Unread",
+    mangaStatus: "—",
     watchedEpisodes: 13,
     totalEpisodes: 13,
     accentColor: "#af2636",
-    glowColor: "rgba(176, 38, 54, 0.38)"
+    glowColor: "rgba(176, 38, 54, 0.38)",
+    rating: 10,
+    song: { title: "Wrong World", artist: "Togenashi Togeari", url: "https://cs1.mp3.pm/download/237989872/N0I1YUh3MU9MUG1jR2dvckVJeGhiR3RoWWxlRnRQejB5Q2pSSGZNZkExajdkQkFRbUQ5UUUzQ28wckJ4Q1dGMVFXdm4yUXBCNm4rU2NkdTRadnNDT1Rwa0FNZWszclZWK0hVenNmZjZHNWJJOGNGNGxnS3RtVGFhb2ZLMEQzTDE/TOGENASHI_TOGEARI_-_Wrong_World_(mp3.pm).mp3" },
+    seasons: [
+      {
+        title: "Girls Band Cry",
+        animeStatus: "Completed",
+        mangaStatus: "Unread",
+        watchedEpisodes: 13,
+        totalEpisodes: 13,
+        note: "Main series"
+      }
+    ]
   },
   {
-    title: "BanG Dream! It's my go!!!",
+    id: "mygo",
+    title: "BanG Dream! It's MyGO!!!!!",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2EFLb3Nf4lJCKCwE2y-MXQdUkexdvAkxn2JSF1zFrGE06LntOFvocaYzw&s=10",
     started: "2026-05-27T12:16:13+08:00",
     animeStatus: "Completed",
     mangaStatus: "Unread",
-    watchedEpisodes: 13,
-    totalEpisodes: 13,
+    watchedEpisodes: 26,
+    totalEpisodes: 26,
     accentColor: "#1a87c0",
-    glowColor: "rgba(36,125,192, 0.38)"
+    glowColor: "rgba(36,125,192, 0.38)",
+    rating: 8.4,
+    song: { title: "Hitoshizuku", artist: "MyGO!!!!!", url: "https://osanime.com/filedownload/2766899/Hitoshizuku.mp3" },
+    seasons: [
+      {
+        title: "BanG Dream! It's MyGO!!!!! (2023)",
+        animeStatus: "Completed",
+        mangaStatus: "Unread",
+        watchedEpisodes: 13,
+        totalEpisodes: 13,
+        note: "Season 1"
+      },
+      {
+        title: "BanG Dream! Ave Mujica (2025)",
+        animeStatus: "Completed",
+        mangaStatus: "Unread",
+        watchedEpisodes: 13,
+        totalEpisodes: 13,
+        note: "Season 2"
+      }
+    ]
   },
   {
+    id: "konosuba",
     title: "Konosuba",
     image: "https://m.media-amazon.com/images/M/MV5BNTQ5NzJjMjgtNDliNC00YTdmLWJiOTQtYWRiMzY4OWU5NGQ3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
     started: "2025-09-25T10:56:18+08:00",
     animeStatus: "Completed",
     mangaStatus: "13% • Dropped",
     seriesLabel: "Light novel",
-    watchedEpisodes: 58,
-    totalEpisodes: 58,
+    watchedEpisodes: 48,
+    totalEpisodes: 48,
     accentColor: "#e6d47b",
-    glowColor: "rgba(230, 212, 123, 0.38)"
+    glowColor: "rgba(230, 212, 123, 0.38)",
+    rating: 9.2,
+    song: null,
+    seasons: [
+      {
+        title: "KonoSuba Season 1",
+        animeStatus: "Completed",
+        mangaStatus: "13% • Dropped",
+        watchedEpisodes: 10,
+        totalEpisodes: 10,
+        note: "10 eps"
+      },
+      {
+        title: "KonoSuba Season 2",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 10,
+        totalEpisodes: 10,
+        note: "10 eps"
+      },
+      {
+        title: "KonoSuba: God's Blessing on this Wonderful World! Legend of Crimson",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 1,
+        totalEpisodes: 1,
+        note: "Film"
+      },
+      {
+        title: "KonoSuba Season 3",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 11,
+        totalEpisodes: 11,
+        note: "11 eps"
+      },
+      {
+        title: "KonoSuba OVAs",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 4,
+        totalEpisodes: 4,
+        note: "Bonus OVAs"
+      },
+      {
+        title: "KonoSuba: An Explosion on This Wonderful World!",
+        animeStatus: "Completed",
+        mangaStatus: "—",
+        watchedEpisodes: 12,
+        totalEpisodes: 12,
+        note: "Megumin spinoff"
+      }
+    ]
   }
 ];
+
+// Track expanded state per franchise
+const expandedState = {};
+
+function toggleExpand(id) {
+  expandedState[id] = !expandedState[id];
+  // Re-render the library
+  const pc = document.getElementById('page-content');
+  if (pc) {
+    pc.innerHTML = buildAnimeLibraryHTML();
+  }
+}
 
 function formatDate(dateString) {
   const date = new Date(dateString);
@@ -469,6 +831,50 @@ function relativeTime(dateString) {
   return `${days} days ago`;
 }
 
+function buildStarRating(rating, accentColor) {
+  const filled = Math.round(rating * 2) / 2; // round to .5
+  const ratingColor = rating >= 9 ? '#f7d44c' : rating >= 7 ? '#a8d8a8' : '#e05555';
+  return `
+    <div class="anime-rating" style="color:${ratingColor}">
+      <svg viewBox="0 0 12 12" fill="currentColor" width="11" height="11" style="vertical-align:-1px">
+        <polygon points="6,1 7.5,4.5 11,5 8.5,7.5 9.2,11 6,9.2 2.8,11 3.5,7.5 1,5 4.5,4.5"/>
+      </svg>
+      <span style="font-size:12px;font-weight:700;letter-spacing:.03em">${rating.toFixed(1)}</span>
+      <span style="font-size:10px;color:rgba(255,255,255,0.25)">/10</span>
+    </div>`;
+}
+
+function buildSongPlayer(song, accentColor, franchiseId) {
+  if (!song) return '';
+  return `
+    <div class="song-player" style="--song-accent:${accentColor}">
+      <button class="song-play-btn" id="songbtn-${franchiseId}" onclick="event.stopPropagation();playSong(this,'${song.url}','${franchiseId}')">
+        ${getSongIcon('play')}
+      </button>
+      <div class="song-info">
+        <div class="song-title">${song.title}</div>
+        <div class="song-artist">${song.artist}</div>
+      </div>
+    </div>`;
+}
+
+function buildSeasonRow(s, accentColor) {
+  const pct2 = (s.watchedEpisodes / s.totalEpisodes) * 100;
+  return `
+    <div class="season-row">
+      <div class="season-header">
+        <div class="season-title">${s.title}</div>
+        ${s.note ? `<div class="season-note">${s.note}</div>` : ''}
+      </div>
+      <div class="season-progress-wrap">
+        <div class="season-progress-track">
+          <div class="season-progress-fill" style="width:${pct2}%;background:${accentColor}"></div>
+        </div>
+        <div class="season-ep-count">${s.watchedEpisodes}/${s.totalEpisodes}</div>
+      </div>
+    </div>`;
+}
+
 function buildAnimeLibraryHTML() {
   return `
     <h3>Anime Spotlight</h3>
@@ -476,21 +882,27 @@ function buildAnimeLibraryHTML() {
       ${animeList.map(anime => {
         const pct = (anime.watchedEpisodes / anime.totalEpisodes) * 100;
         const seriesLabel = anime.seriesLabel || "Manga";
+        const isExpanded = !!expandedState[anime.id];
+        const hasSeasons = anime.seasons && anime.seasons.length > 1;
         return `
-        <div class="anime-card">
+        <div class="anime-card${isExpanded ? ' expanded' : ''}">
           <div class="anime-card-glow" style="background: radial-gradient(circle at top right, ${anime.glowColor}, transparent 60%)"></div>
           <div class="anime-card-inner">
             <div class="anime-cover-wrap">
               <img class="anime-cover" src="${anime.image}" alt="${anime.title}">
             </div>
             <div class="anime-info">
-              <div class="anime-title">${anime.title}</div>
+              <div class="anime-title-row">
+                <div class="anime-title">${anime.title}</div>
+                ${buildStarRating(anime.rating, anime.accentColor)}
+              </div>
               <div class="anime-badges">
                 <div class="anime-badge">${anime.animeStatus}</div>
                 <div class="anime-badge"><span style="color:rgba(255,255,255,0.3)">${seriesLabel} </span>${anime.mangaStatus}</div>
+                ${hasSeasons ? `<div class="anime-badge seasons-count" style="border-color:${anime.accentColor}40;color:${anime.accentColor}">${anime.seasons.length} entries</div>` : ''}
               </div>
               <div class="anime-progress-header">
-                <div class="anime-progress-label">Episodes</div>
+                <div class="anime-progress-label">Total Episodes</div>
                 <div class="anime-progress-label">${anime.watchedEpisodes} / ${anime.totalEpisodes}</div>
               </div>
               <div class="anime-progress-track">
@@ -500,8 +912,25 @@ function buildAnimeLibraryHTML() {
                 <div class="anime-meta-pill"><span style="color:rgba(255,255,255,0.3)">Started </span>${formatDate(anime.started)}</div>
                 <div class="anime-timestamp">${relativeTime(anime.started)}</div>
               </div>
+              <div class="anime-footer-row">
+                ${buildSongPlayer(anime.song, anime.accentColor, anime.id)}
+                ${hasSeasons ? `
+                <button class="expand-btn" onclick="toggleExpand('${anime.id}')" style="--exp-color:${anime.accentColor}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" class="expand-chevron${isExpanded ? ' rotated' : ''}">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                  <span>${isExpanded ? 'Hide' : 'Series'}</span>
+                </button>` : ''}
+              </div>
             </div>
           </div>
+          ${hasSeasons && isExpanded ? `
+          <div class="seasons-panel">
+            <div class="seasons-divider" style="background:${anime.accentColor}40"></div>
+            <div class="seasons-list">
+              ${anime.seasons.map(s => buildSeasonRow(s, anime.accentColor)).join('')}
+            </div>
+          </div>` : ''}
         </div>`;
       }).join('')}
     </div>
