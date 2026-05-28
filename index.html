@@ -383,10 +383,10 @@ html, body {
 
 .anime-footer-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   gap: 8px;
   margin-top: 8px;
+  flex-direction: column;
 }
 
 /* Song Player */
@@ -722,17 +722,17 @@ const animeList = [
     song: { title: "Hitoshizuku", artist: "MyGO!!!!!", url: "https://osanime.com/filedownload/2766899/Hitoshizuku.mp3" },
     seasons: [
       {
-        title: "BanG Dream! It's MyGO!!!!! (2023)",
+        title: "BanG Dream! It's MyGO!!!!!",
         animeStatus: "Completed",
-        mangaStatus: "Unread",
+        mangaStatus: "—",
         watchedEpisodes: 13,
         totalEpisodes: 13,
         note: "Season 1"
       },
       {
-        title: "BanG Dream! Ave Mujica (2025)",
+        title: "BanG Dream! Ave Mujica",
         animeStatus: "Completed",
-        mangaStatus: "Unread",
+        mangaStatus: "—",
         watchedEpisodes: 13,
         totalEpisodes: 13,
         note: "Season 2"
@@ -797,7 +797,7 @@ const animeList = [
       {
         title: "KonoSuba: An Explosion on This Wonderful World!",
         animeStatus: "Completed",
-        mangaStatus: "—",
+        mangaStatus: "Unread",
         watchedEpisodes: 12,
         totalEpisodes: 12,
         note: "Megumin spinoff"
