@@ -459,6 +459,10 @@ html, body {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
+a {
+  text-decoration: none;
+}
+
 .expand-btn {
   display: flex; align-items: center; gap: 4px;
   background: rgba(255,255,255,0.05);
@@ -472,6 +476,7 @@ html, body {
   transition: background .2s, border-color .2s;
   white-space: nowrap;
   flex-shrink: 0;
+  text-decoration: none;
 }
 .expand-btn:hover { background: rgba(255,255,255,0.09); }
 .expand-chevron {
@@ -1124,6 +1129,12 @@ const CHARS = {
     tabs: {
       Personality: `
         <h3>Personality</h3>
+        <a href="https://discord.com/users/735679718506102881" target="_blank">
+          <button class="expand-btn">
+            Add me on Discord!
+          </button>
+        </a>
+        
         <p>Like nijika, im very passionate about my dreams of becoming a good developer and creating projects.</p>
         <p>Optimism, leadership, and forcing progress even when nothing works.</p>
         <div class="tag">Optimistic</div>
