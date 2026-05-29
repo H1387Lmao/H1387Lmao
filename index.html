@@ -174,6 +174,40 @@ html, body {
 .tab-btn:hover  { color: rgba(200,160,160,.8); }
 .tab-btn.active { color: #fff; border-bottom-color: var(--cc, #cc3333); }
 
+.kessoku-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 79, 163, 0.06);
+  border: 1px solid rgba(255, 79, 163, 0.2);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+.kessoku-stat-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.kessoku-stat-info { flex: 1; min-width: 0; }
+.kessoku-stat-value {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 18px;
+  color: #ff4fa3;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.kessoku-stat-label {
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(200,160,160,.5);
+}
+.kessoku-stat-sub {
+  font-size: 10px;
+  color: rgba(200,160,160,.35);
+  white-space: nowrap;
+}
+
 #page-content {
   position: absolute;
   top: 162px;
@@ -389,7 +423,6 @@ html, body {
   flex-direction: column;
 }
 
-/* Song Player */
 .song-player {
   display: flex;
   align-items: center;
@@ -426,7 +459,6 @@ html, body {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* Expand button */
 .expand-btn {
   display: flex; align-items: center; gap: 4px;
   background: rgba(255,255,255,0.05);
@@ -447,7 +479,6 @@ html, body {
 }
 .expand-chevron.rotated { transform: rotate(180deg); }
 
-/* Seasons panel */
 .seasons-panel {
   padding: 0 14px 14px;
 }
@@ -503,6 +534,116 @@ html, body {
 .anime-card.expanded {
   border-color: rgba(255,255,255,0.1);
 }
+
+.lastfm-widget {
+  background: rgba(210, 40, 40, 0.06);
+  border: 1px solid rgba(210, 40, 40, 0.22);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+}
+.lastfm-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+.lastfm-logo {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+}
+.lastfm-label {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(210,100,100,.7);
+  flex: 1;
+}
+.lastfm-username {
+  font-size: 10px;
+  color: rgba(200,160,160,.4);
+  letter-spacing: .05em;
+}
+.lastfm-tracks {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.lastfm-track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 9px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: background .2s;
+  text-decoration: none;
+}
+.lastfm-track:hover { background: rgba(255,255,255,0.06); }
+.lastfm-track-art {
+  width: 36px; height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.06);
+}
+.lastfm-track-art-placeholder {
+  width: 36px; height: 36px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.2);
+  font-size: 16px;
+}
+.lastfm-track-info { flex: 1; min-width: 0; }
+.lastfm-track-name {
+  font-size: 12px; font-weight: 700;
+  color: rgba(255,255,255,.88);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+.lastfm-track-artist {
+  font-size: 10px;
+  color: rgba(200,160,160,.5);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lastfm-track-time {
+  font-size: 10px;
+  color: rgba(200,160,160,.35);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.lastfm-now-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #e05555;
+  flex-shrink: 0;
+  animation: lfpulse 1.4s ease-in-out infinite;
+}
+@keyframes lfpulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+.lastfm-error {
+  font-size: 11px;
+  color: rgba(200,100,100,.6);
+  text-align: center;
+  padding: 8px 0;
+}
+.lastfm-loading {
+  font-size: 11px;
+  color: rgba(200,160,160,.4);
+  letter-spacing: .08em;
+  text-align: center;
+  padding: 8px 0;
+  animation: hpulse 1.5s ease-in-out infinite;
+}
+.lastfm-config-note {
+  font-size: 10px;
+  color: rgba(200,140,100,.55);
+  text-align: center;
+  padding: 6px 0;
+  letter-spacing: .05em;
+}
 </style>
 </head>
 <body>
@@ -544,19 +685,16 @@ html, body {
 
 <script>
 
-// Franchise song state
 let currentAudio = null;
 let currentSongBtn = null;
 
 function playSong(btn, url, franchiseId) {
-  // Stop if same song playing
   if (currentAudio && !currentAudio.paused && currentSongBtn === btn) {
     currentAudio.pause();
     btn.innerHTML = getSongIcon('play');
     currentSongBtn = null;
     return;
   }
-  // Stop previous
   if (currentAudio) {
     currentAudio.pause();
     if (currentSongBtn) currentSongBtn.innerHTML = getSongIcon('play');
@@ -806,12 +944,10 @@ const animeList = [
   }
 ];
 
-// Track expanded state per franchise
 const expandedState = {};
 
 function toggleExpand(id) {
   expandedState[id] = !expandedState[id];
-  // Re-render the library
   const pc = document.getElementById('page-content');
   if (pc) {
     pc.innerHTML = buildAnimeLibraryHTML();
@@ -954,6 +1090,16 @@ const CHARS = {
       `,
       Interests: `
         <h3>My interests</h3>
+        <h4>J-rock</h4>
+        <p>Especially in girl band animes</p>
+        <div class="lastfm-widget" id="lastfm-widget">
+          <div class="lastfm-header">
+            <span class="lastfm-label">Recent Plays</span>
+          </div>
+          <div class="lastfm-tracks" id="lastfm-tracks">
+            <div class="lastfm-loading">Loading tracks…</div>
+          </div>
+        </div>
         <h4>Anime/Manga</h4>
         <p>I love watching anime and reading manga.</p>
         <p>My favorite animes are Bocchi the rock, and Konosuba</p>
@@ -1012,13 +1158,25 @@ const CHARS = {
     color: "#e05555",
     tabs: {
       Skills: `
-        <h3>Skills</h3>
+        <h3>Statistics</h3>
+        <div class="kessoku-stat" id="kessoku-stat-block">
+          <div class="kessoku-stat-icon">
+            <img src="https://static.wikia.nocookie.net/bocchi-the-rock/images/6/68/Kessoku_Band_Logo.svg/revision/latest?cb=20221218052027" 
+              id="kessoku-art" 
+              style="width:50px;height:50px;display:block;" 
+              alt="Kessoku Band">
+          </div>
+            <div class="kessoku-stat-info">
+              <div class="kessoku-stat-value" id="kessoku-minutes">—</div>
+              <div class="kessoku-stat-label">Minutes</div>
+            </div>
+          <div class="kessoku-stat-sub" id="kessoku-scrobbles"></div>
+        </div>
         <div class="stat-row"><div class="stat-label">Larping</div><br><div class="stat-bar-wrap"><div class="stat-bar" style="width:96%"></div></div></div>
         <div class="stat-row"><div class="stat-label">Energy</div><br><div class="stat-bar-wrap"><div class="stat-bar" style="width:98%"></div></div></div>
         <div class="stat-row"><div class="stat-label">Passion</div><br><div class="stat-bar-wrap"><div class="stat-bar" style="width:88%"></div></div></div>
         <div class="stat-row"><div class="stat-label">Communication</div><br><div class="stat-bar-wrap"><div class="stat-bar" style="width:13%"></div></div></div>
-        <p>I chose Kita Ikuyo for this section because i dont know</p>
-        <div class="tag">We love Yuri</div>
+        <div class="tag">Bokita♥</div>
       `
     }
   }
@@ -1106,6 +1264,8 @@ function openChar(id) {
 
   document.getElementById('app').classList.add('open');
   document.getElementById('hint').style.opacity = '0';
+  if (id === 'bocchi') setTimeout(loadLastfm, 0);
+  if (id === 'ikuyo') setTimeout(loadKessokuStat, 0);
 }
 
 function switchTab(name, btn) {
@@ -1117,6 +1277,7 @@ function switchTab(name, btn) {
   pc.innerHTML = getTabContent(current, name);
   pc.scrollTop = 0;
   applyTagColors(pc, d.color);
+  if (name === 'Interests') setTimeout(loadLastfm, 0);
 }
 
 function closePanel() {
@@ -1125,6 +1286,86 @@ function closePanel() {
   document.getElementById('scene').classList.remove('chars-dimmed');
   document.querySelectorAll('.char').forEach(c => c.classList.remove('active'));
   setTimeout(() => document.getElementById('hint').style.opacity = '', 420);
+}
+
+const LASTFM_API_KEY  = 'cb7d6f9cb5a35e63b4cfb3890d9ad871';
+const LASTFM_USERNAME = 'Noto_-';
+const LASTFM_LIMIT    = 5;
+
+function timeSince(unixTs) {
+  const diff = Math.floor(Date.now() / 1000) - parseInt(unixTs, 10);
+  if (diff < 60)  return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+async function loadLastfm() {
+  const container = document.getElementById('lastfm-tracks');
+  if (!container) return;
+
+  try {
+    const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(LASTFM_USERNAME)}&api_key=${LASTFM_API_KEY}&format=json&limit=${LASTFM_LIMIT}`;
+    const res  = await fetch(url);
+    const data = await res.json();
+
+    if (data.error) {
+      container.innerHTML = `<div class="lastfm-error">Last.fm error: ${data.message}</div>`;
+      return;
+    }
+
+    const tracks = data.recenttracks?.track || [];
+    if (!tracks.length) {
+      container.innerHTML = `<div class="lastfm-error">No recent tracks found.</div>`;
+      return;
+    }
+
+    container.innerHTML = tracks.map((t, i) => {
+      const isNow = t['@attr']?.nowplaying === 'true';
+      const art   = t.image?.find(img => img.size === 'medium')?.['#text'];
+      const artEl = art
+        ? `<img class="lastfm-track-art" src="${art}" alt="" loading="lazy">`
+        : `<div class="lastfm-track-art-placeholder">♪</div>`;
+      const timeEl = isNow
+        ? `<div class="lastfm-now-dot"></div>`
+        : `<div class="lastfm-track-time">${timeSince(t.date?.uts)}</div>`;
+      return `
+        <a class="lastfm-track" href="${t.url}" target="_blank" rel="noopener">
+          ${artEl}
+          <div class="lastfm-track-info">
+            <div class="lastfm-track-name">${t.name}</div>
+            <div class="lastfm-track-artist">${t.artist?.['#text'] || ''}</div>
+          </div>
+          ${timeEl}
+        </a>`;
+    }).join('');
+  } catch (e) {
+    container.innerHTML = `<div class="lastfm-error">Could not reach Last.fm.</div>`;
+  }
+}
+
+async function loadKessokuStat() {
+  try {
+    const url = `https://ws.audioscrobbler.com/2.0/?method=library.getartists&user=${encodeURIComponent(LASTFM_USERNAME)}&api_key=${LASTFM_API_KEY}&format=json&limit=200`;
+    const res  = await fetch(url);
+    const data = await res.json();
+    const artists = data.artists?.artist || [];
+    const kb = artists.find(a => a.name.toLowerCase() === 'kessoku band');
+    const el = document.getElementById('kessoku-minutes');
+    const sub = document.getElementById('kessoku-scrobbles');
+    if (!el) return;
+    if (kb) {
+      const plays = parseInt(kb.playcount, 10);
+      const mins  = Math.round(plays * 3.5);
+      el.textContent  = mins.toLocaleString();
+      sub.textContent = plays.toLocaleString() + ' scrobbles';
+    } else {
+      el.textContent = 'No data';
+    }
+  } catch(e) {
+    const el = document.getElementById('kessoku-minutes');
+    if (el) el.textContent = '—';
+  }
 }
 
 document.getElementById('stage-wrap').addEventListener('click', e => {
